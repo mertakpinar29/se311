@@ -28,10 +28,13 @@ public class Reservator {
 
     ArrayList<Reservation> equipmentReservations;
     ArrayList<Reservation> roomReservations;
+    ArrayList<User> users;
     private Reservator() {
         this.equipmentReservations = new ArrayList<>();
         this.roomReservations = new ArrayList<>();
+        this.users = new ArrayList<>();
     }
+
 
     public static Reservator getInstance() {
         if(reservatorInstance == null) reservatorInstance = new Reservator();
@@ -89,10 +92,46 @@ public class Reservator {
     public void unlockRoom(Security security, Scanner scanner) {
         System.out.println("Type an integer to select your reservation");
         for(int i = 0; i < roomReservations.size(); i++) {
-            System.out.println(roomReservations.get(i).name + " - " + roomReservations.get(i).reservationName);
+            System.out.println(i + " - " + roomReservations.get(i).name + " - " + roomReservations.get(i).reservationName);
         }
         int choice = scanner.nextInt();
         Security.unlockRoom(roomReservations.get(choice).getRoom());
         System.out.println("Room has been unlocked");
     }
+
+    public void getAvailableEquipmentsRoomsForDay(Scanner scanner, ArrayList<CompositeEquipment> equipments, ArrayList<Room> rooms) {
+        System.out.println("Type an integer to select a day and see available equipments for that day");
+        System.out.println("0 - Monday");
+        System.out.println("1 - Tuesday");
+        System.out.println("2 - Wednesday");
+        System.out.println("3 - Thursday");
+        System.out.println("4 - Friday");
+
+        int choice = scanner.nextInt();
+
+        for(int i = 0; i < equipments.size(); i++) {
+            String[] currentItemSchedule = equipments.get(i).getWeeklySchedule();
+            if(currentItemSchedule[choice] != "full") System.out.println(equipments.get(i).getName());
+        }
+
+        for(int i = 0; i < rooms.size(); i++) {
+            String[] currentItemSchedule = rooms.get(i).getWeeklySchedule();
+            if(currentItemSchedule[choice] != "full") System.out.println(rooms.get(i).getName());
+        }
+    }
+
+    public void setEquipmentAvailability(CompositeEquipment compositeEquipment, int dayIndex, String dayName) {
+        String[] weeklySchedule = compositeEquipment.getWeeklySchedule();
+        weeklySchedule[dayIndex] = dayName;
+        compositeEquipment.Notify();
+        System.out.println("for " + dayName);
+    }
+
+    public void setRoomAvailability(Room room, int dayIndex, String dayName) {
+        String[] weeklySchedule = room.getWeeklySchedule();
+        weeklySchedule[dayIndex] = dayName;
+        room.Notify();
+        System.out.println("for " + dayName);
+    }
+
 }

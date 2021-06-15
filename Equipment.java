@@ -1,13 +1,24 @@
 import java.util.ArrayList;
 
 // types: 0 -> VIDEO, 1 -> AUDIO, 2 -> EDIT, 3 -> Identifier, 4 -> Root
-interface Asset {
-    void Add(Asset d);
-    void Display(int indent);
-    public String getName();
+abstract class Asset {
+    abstract void Add(Asset d);
+    abstract void Display(int indent);
+    abstract public String getName();
+    protected ArrayList<User> watchers;
+
+    public void Attach (User user) {
+        watchers.add(user);
+    }
+
+    public void Notify() {
+        for(int i = 0; i < watchers.size(); i++) {
+            watchers.get(i).EquipmentUpdate(this);
+        }
+    }
 }
 //This is the "Leaf".
-class PrimitiveEquipment implements Asset {
+class PrimitiveEquipment extends Asset {
     private int type;
     private String name;
     public String getName() { return name;}
@@ -21,7 +32,7 @@ class PrimitiveEquipment implements Asset {
     }
 }
 // This is the "Composite"
-class CompositeEquipment implements Asset {
+class CompositeEquipment extends Asset {
     String[] weeklySchedule;
     private int type;
     private String name;
